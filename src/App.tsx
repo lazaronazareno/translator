@@ -2,12 +2,13 @@ import { Container, Row, Col, Button, Stack } from 'react-bootstrap'
 import './App.css'
 import { useEffect } from 'react'
 import { useStore } from './hooks/useStore'
-import { AUTO_LANGUAGE } from './constants'
+import { AUTO_LANGUAGE, VOICE_FOR_LANGUAGE } from './constants'
 import { LanguageSelector } from './components/LanguageSelector'
 import { SectionType } from './types.d'
 import { TextArea } from './components/Textarea'
-import { translate } from './services/translate'
-import { SwapArrowsIcon } from './components/Icons'
+import { translate } from './services/translateCohere'
+import { ClipBoardIcon, SpeakerIcon, SwapArrowsIcon } from './components/icons'
+import { useDebounce } from './hooks/useDebounce'
 
 function App() {
   const {
@@ -23,20 +24,33 @@ function App() {
     setToLanguage
   } = useStore()
 
-  useEffect(() => {
-    if (userText === '') return
+  const debounceUserText = useDebounce(userText, 800)
 
-    translate({ text: userText, fromLanguage, toLanguage })
+  useEffect(() => {
+    if (debounceUserText === '') return
+
+    translate({ text: debounceUserText, fromLanguage, toLanguage })
       .then((result) => {
         if (result === null || result === undefined) return
-        setResultText(result)
+        console.log(result)
+        setResultText(result.generations[0].text)
       })
       .catch(() => { setResultText('Error') })
-  }, [userText, fromLanguage, toLanguage])
+  }, [debounceUserText, fromLanguage, toLanguage])
+
+  const handleClipboard = () => {
+    navigator.clipboard.writeText(resultText).catch(() => { })
+  }
+
+  const handleSpeak = () => {
+    const utterence = new SpeechSynthesisUtterance(resultText)
+    utterence.lang = VOICE_FOR_LANGUAGE[toLanguage]
+    speechSynthesis.speak(utterence)
+  }
 
   return (
     <Container fluid>
-      <h1>Translate</h1>
+      <h1>Cohere Translate</h1>
       <Row>
         <Col>
           <Stack gap={2}>
@@ -67,12 +81,28 @@ function App() {
               type={SectionType.To}
               value={toLanguage}
               onChange={setToLanguage} />
-            <TextArea
-              type={SectionType.To}
-              value={resultText}
-              onChange={setResultText}
-              loading={loading}
-            />
+            <div className='text-area-container'>
+              <TextArea
+                type={SectionType.To}
+                value={resultText}
+                onChange={setResultText}
+                loading={loading}
+              />
+              <div className='button-container'>
+                <Button
+                  variant='link'
+                  onClick={handleClipboard}
+                >
+                  <ClipBoardIcon />
+                </Button>
+                <Button
+                  variant='link'
+                  onClick={handleSpeak}
+                >
+                  <SpeakerIcon />
+                </Button>
+              </div>
+            </div>
           </Stack>
         </Col>
       </Row>

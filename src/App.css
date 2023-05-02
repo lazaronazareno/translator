@@ -11,3 +11,14 @@
 textarea {
   resize: none!important;
 }
+
+.text-area-container {
+  position: relative;
+}
+
+.button-container {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+}

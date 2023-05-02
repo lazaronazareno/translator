@@ -3,8 +3,8 @@ import { type FromLanguage, type Action, type State, type Language } from '../ty
 import { AUTO_LANGUAGE } from '../constants'
 
 const InitialState = {
-  fromLanguage: 'auto',
-  toLanguage: 'en',
+  fromLanguage: 'auto' as FromLanguage,
+  toLanguage: 'en' as Language,
   userText: '',
   resultText: '',
   loading: false
@@ -16,8 +16,12 @@ function reducer(state: State, action: Action) {
   if (type === 'INTERCHANGE_LANGUAGES') {
     if (state.fromLanguage === AUTO_LANGUAGE) return state
 
+    const loading = state.userText !== ''
+
     return {
       ...state,
+      loading,
+      resultText: '',
       fromLanguage: state.toLanguage,
       toLanguage: state.fromLanguage
     }
@@ -31,7 +35,7 @@ function reducer(state: State, action: Action) {
     return {
       ...state,
       fromLanguage: action.payload,
-      result: '',
+      resultText: '',
       loading
     }
   }
@@ -43,7 +47,7 @@ function reducer(state: State, action: Action) {
     return {
       ...state,
       toLanguage: action.payload,
-      result: '',
+      resultText: '',
       loading
     }
   }
