@@ -51,8 +51,8 @@ function App() {
   return (
     <Container fluid>
       <h1>Cohere Translate</h1>
-      <Row>
-        <Col>
+      <Row className="justify-content-center">
+        <Col sm={4}>
           <Stack gap={2}>
             <LanguageSelector
               type={SectionType.From}
@@ -75,7 +75,7 @@ function App() {
             <SwapArrowsIcon />
           </Button>
         </Col>
-        <Col>
+        <Col sm={4}>
           <Stack gap={2}>
             <LanguageSelector
               type={SectionType.To}
@@ -106,6 +106,7 @@ function App() {
           </Stack>
         </Col>
       </Row>
+      <span><strong>Note: </strong> Limited to 5 translates per minute.</span>
     </Container>
   )
 }
