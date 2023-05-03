@@ -1,9 +1,25 @@
 #root {
-  max-width: 800px;
+  background-color: #7c7c7c;
+  color: white;
   min-height: 100vh;
-  margin: 0 auto;
+  margin: 0;
   padding: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+textarea {
+  resize: none!important;
+}
+
+.text-area-container {
+  position: relative;
+}
+
+.button-container {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
 }
